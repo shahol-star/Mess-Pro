@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Mess Manager PRO - Advanced</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+
+    <style>
+        :root { --p-color: #00a8ff; --bg: #f0f2f5; --danger: #ff7675; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding: 15px; overflow-x: hidden; }
+        
+        /* --- Splash Screen CSS --- */
+        #splashScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        .loader {
+            width: 50px; height: 50px; border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--p-color); border-radius: 50%;
+            animation: spin 1s linear infinite; margin-top: 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- Main UI CSS --- */
+        .container { display: none; max-width: 500px; margin: auto; animation: fadeIn 0.8s; }
+        .auth-screen { display: none; max-width: 400px; margin: 50px auto; text-align: center; animation: fadeIn 0.8s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        h2, h3 { color: #2f3640; margin-top: 0; text-align: center; }
+        
+        /* Crafted by text style */
+        .crafted-by { 
+            font-family: 'Dancing Script', cursive; 
+            color: #7f8c8d; 
+            font-size: 16px; 
+            margin-top: -5px; 
+            margin-bottom: 20px;
+            display: block;
+            text-align: center;
+        }
+
+        input, select, button { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; box-sizing: border-box; }
+        button { background: var(--p-color); color: white; border: none; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        button:active { transform: scale(0.98); }
+        
+        .pass-box { position: relative; }
+        .toggle-pass { position: absolute; right: 10px; top: 22px; cursor: pointer; font-size: 11px; color: #666; font-weight: bold; }
+        .member-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; }
+        .log-item { font-size: 12px; display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dotted #ccc; }
+        .summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; font-weight: bold; }
+        .details-section { display: none; margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 10px; border: 1px solid #eee; }
+        .delete-btn { color: var(--danger); cursor: pointer; font-weight: bold; margin-left: 10px; }
+        .status-get { color: #2ecc71; font-weight: bold; font-size: 13px; }
+        .status-give { color: #e74c3c; font-weight: bold; font-size: 13px; }
+        .settings-panel, .history-panel { display: none; background: #f1f2f6; padding: 15px; border-radius: 10px; margin-top: 10px; border: 1px solid #ddd; }
+        .archive-card { background: white; margin-bottom: 10px; padding: 10px; border-radius: 10px; border-left: 5px solid var(--p-color); cursor: pointer; }
+        .mini-text { font-size: 11px; color: #7f8c8d; }
+        .action-icons span { cursor: pointer; margin-left: 10px; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+<div id="splashScreen">
+    <h1 style="color: #2f3640; margin: 0;">🏠 Mess PRO</h1>
+    <p style="color: #7f8c8d;">Secure Manager</p>
+    <div class="loader"></div>
+</div>
+
+<div id="authScreen" class="auth-screen">
+    <div class="card">
+        <h2 style="margin-bottom: 5px;">🏠 Mess Manager PRO</h2>
+        <span class="crafted-by">Crafted by: Shahol Mahmud</span>
+        
+        <p style="font-size: 14px; color: #636e72;">Login or Create Group</p>
+        <input type="text" id="groupName" placeholder="Group Name">
+        <div class="pass-box">
+            <input type="password" id="groupPass" placeholder="Password">
+            <span class="toggle-pass" onclick="togglePass('groupPass')">SHOW</span>
+        </div>
+        <button onclick="handleAuth()">Enter Group</button>
+    </div>
+</div>
+
+<div id="appContainer" class="container">
+    <div class="card" style="padding: 15px; text-align: center;">
+        <h2 style="margin-bottom: 5px; font-size: 20px;">🏠 Mess Manager PRO</h2>
+        <span class="crafted-by" style="font-size: 14px; margin-bottom: 10px;">Crafted by: Shahol Mahmud</span>
+        
+        <div style="border-top: 1px solid #eee; padding-top: 10px; font-size: 14px;">
+            Group: <strong id="displayGroup"></strong> 
+        </div>
+        
+        <div style="margin-top: 10px; display: flex; justify-content: center; gap: 15px;">
+            <span onclick="toggleSettings()" style="cursor:pointer; color:var(--p-color); font-size: 13px;">⚙️ Settings</span>
+            <span onclick="toggleHistory()" style="cursor:pointer; color:#e67e22; font-size: 13px;">📜 History</span>
+            <span onclick="logout()" style="cursor:pointer; color:var(--danger); font-size: 13px;">🚪 Logout</span>
+        </div>
+    </div>
+
+    <div id="historyPanel" class="history-panel card">
+        <h3>📜 Archived Records</h3>
+        <div id="historyList">Loading...</div>
+        <button onclick="toggleHistory()" style="background:#bdc3c7; margin-top:10px;">Close History</button>
+    </div>
+
+    <div id="settingsPanel" class="settings-panel card">
+        <h3>Group Settings</h3>
+        <input type="text" id="newGroupName" placeholder="Update Group Name">
+        <div class="pass-box">
+            <input type="password" id="newGroupPass" placeholder="Update Password">
+            <span class="toggle-pass" onclick="togglePass('newGroupPass')">SHOW</span>
+        </div>
+        <button onclick="updateSettings()" style="background:#2ecc71;">Save Changes</button>
+    </div>
+
+    <div class="card summary">
+        <div style="background:#dff9fb; padding:10px; border-radius:10px;">Total Cost<br><span id="totalCost">৳ 0</span></div>
+        <div style="background:#f1f2f6; padding:10px; border-radius:10px;">Avg/Person<br><span id="avgCost">৳ 0</span></div>
+    </div>
+
+    <div class="card">
+        <h3>Add Member</h3>
+        <input type="text" id="mName" placeholder="Full Name">
+        <button onclick="addMember()">Add New Member</button>
+    </div>
+
+    <div class="card">
+        <h3>Add Expense</h3>
+        <select id="mSelect"></select>
+        <input type="number" id="mAmount" placeholder="Amount (৳)">
+        <input type="text" id="mReason" placeholder="Reason (e.g. Bazar)">
+        <input type="date" id="mDate">
+        <button onclick="addExpense()">Update Record</button>
+    </div>
+
+    <div id="memberList"></div>
+    <button onclick="archiveAndReset()" style="background: #2f3640; margin-top: 20px; margin-bottom: 30px;">Close Month & Save to History</button>
+</div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyABY4gQ5-4HW8QlXI2-NfYu...", 
+        authDomain: "mess-manager-904f3.firebaseapp.com",
+        databaseURL: "https://mess-manager-904f3-default-rtdb.firebaseio.com",
+        projectId: "mess-manager-904f3",
+        storageBucket: "mess-manager-904f3.appspot.com",
+        messagingSenderId: "827002437374",
+        appId: "1:827002437374:web:34cb1ce1fb..."
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const rootDb = firebase.database().ref("v3_groups");
+    let currentGroupId = "";
+
+    window.onload = function() {
+        const savedGroup = localStorage.getItem('mess_group_name');
+        const savedPass = localStorage.getItem('mess_group_pass');
+
+        setTimeout(() => {
+            if(savedGroup && savedPass) {
+                checkLogin(savedGroup, savedPass, true);
+            } else {
+                hideSplash();
+                document.getElementById('authScreen').style.display = 'block';
+            }
+        }, 1500); 
+    };
+
+    function hideSplash() {
+        const splash = document.getElementById('splashScreen');
+        splash.style.opacity = '0';
+        setTimeout(() => splash.style.display = 'none', 500);
+    }
+
+    function togglePass(id) {
+        const el = document.getElementById(id);
+        const btn = el.nextElementSibling;
+        el.type = el.type === "password" ? "text" : "password";
+        btn.innerText = el.type === "password" ? "SHOW" : "HIDE";
+    }
+
+    function handleAuth() {
+        const name = document.getElementById('groupName').value.trim().toLowerCase();
+        const pass = document.getElementById('groupPass').value.trim();
+        if(!name || !pass) return alert("Fill all fields");
+        checkLogin(name, pass, false);
+    }
+
+    function checkLogin(name, pass, isAuto) {
+        rootDb.child(name).once('value', snap => {
+            if(snap.exists()) {
+                if(snap.val().password === pass) {
+                    localStorage.setItem('mess_group_name', name);
+                    localStorage.setItem('mess_group_pass', pass);
+                    startApp(name);
+                } else {
+                    if(isAuto) { localStorage.clear(); location.reload(); }
+                    else alert("Wrong Password!");
+                }
+            } else {
+                if(isAuto) { localStorage.clear(); location.reload(); }
+                else if(confirm("Group not found. Create new one?")) {
+                    rootDb.child(name).set({ password: pass, members: [] }).then(() => {
+                        localStorage.setItem('mess_group_name', name);
+                        localStorage.setItem('mess_group_pass', pass);
+                        startApp(name);
+                    });
+                }
+            }
+        });
+    }
+
+    function logout() {
+        if(confirm("Do you want to logout?")) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
+
+    function startApp(groupId) {
+        currentGroupId = groupId;
+        document.getElementById('displayGroup').innerText = groupId.toUpperCase();
+        hideSplash();
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('appContainer').style.display = 'block';
+        rootDb.child(groupId).child('members').on('value', snapshot => { render(snapshot.val() || []); });
+    }
+
+    function render(members) {
+        const list = document.getElementById('memberList');
+        const select = document.getElementById('mSelect');
+        let total = 0;
+        list.innerHTML = "";
+        select.innerHTML = "<option value=''>Select Member</option>";
+        
+        members.forEach(m => total += (m.total || 0));
+        let avg = members.length > 0 ? total / members.length : 0;
+        
+        members.forEach(m => {
+            select.innerHTML += `<option value="${m.id}">${m.name}</option>`;
+            let status = (m.total || 0) - avg;
+            list.innerHTML += `
+                <div class="card">
+                    <div class="member-row">
+                        <div><strong>${m.name}</strong><div class="mini-text">Spent: ৳ ${m.total || 0}</div></div>
+                        <div class="action-icons"><span onclick="editMember(${m.id})">✏️</span><span onclick="deleteMember(${m.id})" style="color:var(--danger)">🗑️</span></div>
+                    </div>
+                    <div class="${status >= 0 ? 'status-get' : 'status-give'}">
+                        ${status >= 0 ? 'Will Get: ৳' + status.toFixed(2) : 'Must Give: ৳' + Math.abs(status).toFixed(2)}
+                    </div>
+                    <button onclick="toggleDetails(${m.id})" style="background:#eee; color:#333; margin-top:10px; font-size:11px;">Bazar List</button>
+                    <div id="details-${m.id}" class="details-section">
+                        ${m.logs ? m.logs.map(l => `
+                            <div class="log-item">
+                                <span>${l.date} - ${l.reason}</span>
+                                <span>৳ ${l.amt} <span class="delete-btn" onclick="deleteLog(${m.id}, ${l.logId})">✖</span></span>
+                            </div>`).join('') : '<p class="mini-text">No records found</p>'}
+                    </div>
+                </div>`;
+        });
+        document.getElementById('totalCost').innerText = "৳ " + total;
+        document.getElementById('avgCost').innerText = "৳ " + avg.toFixed(2);
+    }
+
+    function toggleDetails(id) {
+        const el = document.getElementById(`details-${id}`);
+        el.style.display = el.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function addMember() {
+        const name = document.getElementById('mName').value.trim();
+        if(!name) return;
+        rootDb.child(currentGroupId).child('members').once('value').then(snap => {
+            let members = snap.val() || [];
+            members.push({ id: Date.now(), name: name, total: 0, logs: [] });
+            rootDb.child(currentGroupId).child('members').set(members);
+            document.getElementById('mName').value = "";
+        });
+    }
+
+    function editMember(id) {
+        const newName = prompt("Enter new name:");
+        if(!newName) return;
+        rootDb.child(currentGroupId).child('members').once('value').then(snap => {
+            let members = snap.val();
+            let m = members.find(item => item.id == id);
+            if(m) m.name = newName;
+            rootDb.child(currentGroupId).child('members').set(members);
+        });
+    }
+
+    function deleteMember(id) {
+        if(confirm("Remove this member?")) {
+            rootDb.child(currentGroupId).child('members').once('value').then(snap => {
+                let members = snap.val();
+                rootDb.child(currentGroupId).child('members').set(members.filter(m => m.id != id));
+            });
+        }
+    }
+
+    function addExpense() {
+        const id = document.getElementById('mSelect').value;
+        const amt = parseFloat(document.getElementById('mAmount').value);
+        const reason = document.getElementById('mReason').value || "Bazar";
+        const date = document.getElementById('mDate').value || new Date().toLocaleDateString();
+        if(!id || !amt) return alert("Select member and enter amount");
+        rootDb.child(currentGroupId).child('members').once('value').then(snap => {
+            let members = snap.val();
+            let m = members.find(item => item.id == id);
+            m.total = (m.total || 0) + amt;
+            if(!m.logs) m.logs = [];
+            m.logs.push({ reason, amt, date, logId: Date.now() });
+            rootDb.child(currentGroupId).child('members').set(members);
+            document.getElementById('mAmount').value = "";
+            document.getElementById('mReason').value = "";
+        });
+    }
+
+    function deleteLog(mId, logId) {
+        rootDb.child(currentGroupId).child('members').once('value').then(snap => {
+            let members = snap.val();
+            let m = members.find(item => item.id == mId);
+            let logIdx = m.logs.findIndex(l => l.logId == logId);
+            m.total -= m.logs[logIdx].amt;
+            m.logs.splice(logIdx, 1);
+            rootDb.child(currentGroupId).child('members').set(members);
+        });
+    }
+
+    function toggleHistory() {
+        const panel = document.getElementById('historyPanel');
+        panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+        document.getElementById('settingsPanel').style.display = 'none';
+        if(panel.style.display === 'block') loadHistory();
+    }
+
+    function loadHistory() {
+        const hList = document.getElementById('historyList');
+        rootDb.child(currentGroupId).child('archives').once('value', snap => {
+            const archives = snap.val();
+            if(!archives) { hList.innerHTML = "No history found."; return; }
+            let html = "";
+            for(let date in archives) {
+                const members = archives[date];
+                const total = members.reduce((sum, m) => sum + (m.total || 0), 0);
+                html += `
+                <div class="archive-card" onclick="this.querySelector('.det').style.display = this.querySelector('.det').style.display === 'block' ? 'none' : 'block'">
+                    <strong>📅 ${date}</strong><br>
+                    <span class="mini-text">Total: ৳ ${total} | ${members.length} Members</span>
+                    <div class="det" style="display:none; font-size:12px; margin-top:8px; border-top:1px solid #eee; padding-top:5px;">
+                        ${members.map(m => `<b>${m.name}:</b> ৳ ${m.total}<br>`).join('')}
+                    </div>
+                </div>`;
+            }
+            hList.innerHTML = html;
+        });
+    }
+
+    function archiveAndReset() {
+        const month = prompt("Enter Month (e.g., Feb 2026):");
+        if(!month) return;
+        rootDb.child(currentGroupId).child('members').once('value').then(snap => {
+            const data = snap.val();
+            if(!data) return;
+            rootDb.child(currentGroupId).child('archives').child(month).set(data).then(() => {
+                const reset = data.map(m => ({ ...m, total: 0, logs: [] }));
+                rootDb.child(currentGroupId).child('members').set(reset);
+                alert("Archived Successfully!");
+            });
+        });
+    }
+
+    function toggleSettings() {
+        const panel = document.getElementById('settingsPanel');
+        panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+        document.getElementById('historyPanel').style.display = 'none';
+    }
+
+    function updateSettings() {
+        const name = document.getElementById('newGroupName').value.trim().toLowerCase();
+        const pass = document.getElementById('newGroupPass').value.trim();
+        rootDb.child(currentGroupId).once('value', snap => {
+            let data = snap.val();
+            if(pass) { data.password = pass; localStorage.setItem('mess_group_pass', pass); }
+            if(name && name !== currentGroupId) {
+                rootDb.child(name).set(data).then(() => {
+                    rootDb.child(currentGroupId).remove();
+                    localStorage.setItem('mess_group_name', name);
+                    location.reload();
+                });
+            } else {
+                rootDb.child(currentGroupId).update({password: data.password});
+                alert("Updated!");
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
