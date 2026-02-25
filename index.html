@@ -20,35 +20,65 @@
         [data-theme="dark"] {
             --bg: #1e272e; --card: #2f3640; --text: #f5f6fa;
         }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; transition: 0.3s; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; transition: 0.3s; padding-bottom: 50px; }
         
-        .app-title { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 28px; margin: 0; color: var(--p-color); }
-        .crafted-by { font-family: 'Dancing Script', cursive; font-size: 16px; color: #7f8c8d; margin-bottom: 20px; display: block; }
+        /* Menu Styling - White Background */
+        .dashboard-btn {
+            position: fixed; top: 15px; left: 15px; z-index: 1001;
+            background: var(--p-color); color: white; padding: 8px 12px;
+            border-radius: 8px; cursor: pointer; font-size: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .dashboard {
+            position: fixed; top: 0; left: -100%; width: 250px; height: 100%;
+            background: #ffffff; z-index: 1002; transition: 0.3s;
+            display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        .dashboard.open { left: 0; }
+        .dashboard-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 1001; display: none;
+        }
+        .nav-item {
+            color: #2f3640; font-size: 15px; font-weight: 600; cursor: pointer;
+            padding: 12px; border-bottom: 1px solid #f1f2f6; transition: 0.2s;
+        }
+        .nav-item:active { background: #f1f2f6; }
+
+        /* Header Styling */
+        .page-header { text-align: center; padding: 20px 0 10px 0; }
+        .app-title { font-weight: 600; font-size: 28px; color: var(--p-color); margin: 5px 0; }
+        .crafted-by { font-family: 'Dancing Script', cursive; font-size: 16px; color: #7f8c8d; display: block; margin-bottom: 15px; }
 
         #splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
         .loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--p-color); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .container { display: none; max-width: 500px; margin: auto; }
-        .card { background: var(--card); padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .container { display: none; max-width: 500px; margin: auto; padding: 15px; }
+        .page { display: none; padding-top: 50px; }
+        .page-active { display: block; }
         
-        /* আপনার অনুরোধ অনুযায়ী নিচের সেকশনে Georgia ফন্ট যোগ করা হয়েছে */
+        .card { background: var(--card); padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        
         input, select, button { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; box-sizing: border-box; background: var(--card); color: var(--text); font-family: 'Georgia', serif; }
         button { background: var(--p-color); color: white; border: none; font-weight: 600; cursor: pointer; }
         
-        .pass-container { position: relative; }
-        .toggle-btn { position: absolute; right: 10px; top: 20px; cursor: pointer; font-size: 12px; font-weight: bold; color: var(--p-color); }
+        .pass-container { position: relative; width: 100%; }
+        .toggle-btn { position: absolute; right: 12px; top: 20px; cursor: pointer; font-size: 11px; font-weight: bold; color: var(--p-color); }
 
         .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .sum-card { padding: 10px; border-radius: 10px; text-align: center; font-size: 13px; font-weight: bold; }
+        .sum-card { padding: 10px; border-radius: 10px; text-align: center; font-size: 12px; font-weight: bold; }
         
-        .status-badge { font-size: 12px; padding: 3px 8px; border-radius: 5px; margin-top: 5px; display: inline-block; }
-        .get { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
-        .give { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+        .status-badge { font-size: 11px; padding: 3px 8px; border-radius: 5px; margin-top: 5px; display: inline-block; }
+        .get { background: rgba(46, 204, 113, 0.1); color: #2ecc71; }
+        .give { background: rgba(231, 76, 60, 0.1); color: #e74c3c; }
 
-        .history-panel { display: none; margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 10px; font-size: 12px; }
-        .log-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
-        .log-table th, .log-table td { border-bottom: 1px solid #ddd; padding: 8px; text-align: left; }
+        .log-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
+        .log-table th, .log-table td { border-bottom: 1px solid #ddd; padding: 10px 5px; text-align: left; }
+        
+        .action-btn { font-size: 10px; padding: 3px 6px; border-radius: 3px; border: none; cursor: pointer; margin-left: 2px; }
+        .edit-btn { background: #f1c40f; color: #000; }
+        .del-btn { background: #e74c3c; color: #fff; }
     </style>
 </head>
 <body data-theme="light">
@@ -56,85 +86,126 @@
 <div id="splashScreen">
     <img src="https://cdn-icons-png.flaticon.com/512/10149/10149458.png" width="60" style="margin-bottom:15px;">
     <h1 class="app-title">Expensio</h1>
-    <span class="crafted-by">Crafted by: Shahol Mahmud</span>
+    <span class="crafted-by">Crafted By: Shahol Mahmud</span>
     <div class="loader"></div>
 </div>
 
-<div id="authScreen" class="container" style="display:none; margin-top:50px;">
+<div id="dashboardBtn" class="dashboard-btn" onclick="toggleDashboard()" style="display:none;">☰</div>
+<div id="dashboardOverlay" class="dashboard-overlay" onclick="toggleDashboard()"></div>
+<div id="mainDashboard" class="dashboard">
+    <div style="text-align:center; margin-bottom:20px;">
+        <img src="https://cdn-icons-png.flaticon.com/512/10149/10149458.png" width="40">
+        <div style="color:var(--p-color); font-weight:bold; font-size:18px;">Expensio</div>
+    </div>
+    <div class="nav-item" onclick="showPage('home')">Add Member & Expense</div>
+    <div class="nav-item" onclick="showPage('itemized')">Itemized Cost Per Person</div>
+    <div class="nav-item" onclick="showPage('transactions')">Running Month Transactions</div>
+    <div class="nav-item" onclick="showPage('archive')">Archive</div>
+    <div class="nav-item" onclick="showPage('help')">Help</div>
+    <div class="nav-item" onclick="showPage('settings')">Settings</div>
+    <div class="nav-item" style="color: #ff7675; margin-top: auto;" onclick="logout()">Logout</div>
+</div>
+
+<div id="authScreen" class="container" style="display:none; margin-top:60px;">
     <div class="card" style="text-align:center;">
-        <img src="https://cdn-icons-png.flaticon.com/512/10149/10149458.png" width="50" style="margin-bottom:10px;">
+        <img src="https://cdn-icons-png.flaticon.com/512/10149/10149458.png" width="60">
         <h1 class="app-title">Expensio</h1>
-        <span class="crafted-by">Crafted by: Shahol Mahmud</span>
+        <span class="crafted-by">Crafted By: Shahol Mahmud</span>
         <input type="text" id="groupName" placeholder="Group Name">
         <div class="pass-container">
             <input type="password" id="groupPass" placeholder="Password">
-            <span class="toggle-btn" onclick="togglePass()">SHOW</span>
+            <span class="toggle-btn" onclick="togglePass('groupPass')">SHOW</span>
         </div>
-        <button onclick="handleAuth()">Enter Group</button>
+        <button onclick="handleAuth()" style="margin-top:10px;">Enter Group</button>
     </div>
 </div>
 
 <div id="appContainer" class="container">
-    <div class="card" style="text-align:center;">
-        <h2 class="app-title">Expensio</h2>
-        <span class="crafted-by">Crafted by: Shahol Mahmud</span>
-        <div style="display:flex; justify-content:space-around; font-size:12px; margin-top:10px;">
-            <span onclick="toggleTheme()" style="cursor:pointer;">🌓 Theme</span>
-            <span id="historyBtn" onclick="toggleArchive()" style="cursor:pointer; color:#e67e22;">📜 Archive</span>
-            <span onclick="logout()" style="cursor:pointer; color:var(--danger)">🚪 Logout</span>
+    <div class="page-header">
+        <img src="https://cdn-icons-png.flaticon.com/512/10149/10149458.png" width="50">
+        <h1 class="app-title">Expensio</h1>
+        <span class="crafted-by">Crafted By: Shahol Mahmud</span>
+        <div style="font-size: 13px; font-weight:600;">Group: <span id="displayGroupName" style="color:var(--p-color)">...</span></div>
+    </div>
+
+    <div id="homePage" class="page page-active">
+        <div class="summary-grid">
+            <div class="sum-card" style="background:#e3f2fd; color:#0d47a1;">Market<br><span id="totalMarket">৳ 0</span></div>
+            <div class="sum-card" style="background:#f3e5f5; color:#4a148c;">Fixed<br><span id="totalFixed">৳ 0</span></div>
+            <div class="sum-card" style="background:#e8f5e9; color:#1b5e20;">Meals<br><span id="totalMeals">0</span></div>
+            <div class="sum-card" style="background:#fff3e0; color:#e65100;">Rate<br><span id="mealRate">৳ 0</span></div>
+        </div>
+        <div class="card">
+            <h3>Add Member</h3>
+            <input type="text" id="newMemberName" placeholder="New Member Name">
+            <button onclick="addMember()">Add Member</button>
+        </div>
+        <div class="card">
+            <h3>Add Expense</h3>
+            <select id="mSelect"></select>
+            <input type="number" id="mAmount" placeholder="Amount (৳)">
+            <select id="mCategory">
+                <option value="market">🛒 Market (Meal Based)</option>
+                <option value="fixed">🏠 Fixed (Rent/Bill)</option>
+            </select>
+            <input type="text" id="mReason" placeholder="Reason (e.g. Bazar)">
+            <input type="date" id="mDate">
+            <button onclick="addExpense()">Save Record</button>
         </div>
     </div>
 
-    <div id="archiveSection" class="card" style="display:none;">
-        <h3>📜 Archived Months</h3>
-        <div id="archiveList"></div>
-        <button onclick="toggleArchive()" style="background:#bdc3c7;">Close</button>
+    <div id="itemizedPage" class="page">
+        <h3 style="text-align: center;">Member Calculations</h3>
+        <div id="memberList"></div>
     </div>
 
-    <div class="summary-grid">
-        <div class="sum-card" style="background:#e3f2fd; color:#0d47a1;">Market<br><span id="totalMarket">৳ 0</span></div>
-        <div class="sum-card" style="background:#f3e5f5; color:#4a148c;">Fixed<br><span id="totalFixed">৳ 0</span></div>
-        <div class="sum-card" style="background:#e8f5e9; color:#1b5e20;">Total Meals<br><span id="totalMeals">0</span></div>
-        <div class="sum-card" style="background:#fff3e0; color:#e65100;">Meal Rate<br><span id="mealRate">৳ 0</span></div>
+    <div id="transactionsPage" class="page">
+        <div class="card">
+            <h3>Running Month Transactions</h3>
+            <table class="log-table">
+                <thead>
+                    <tr><th>Date</th><th>Name</th><th>Reason</th><th>Amt</th></tr>
+                </thead>
+                <tbody id="runningLogTable"></tbody>
+            </table>
+        </div>
     </div>
 
-    <div class="card">
-        <h3>Add Member</h3>
-        <input type="text" id="newMemberName" placeholder="New Member Name">
-        <button onclick="addMember()">Add Member</button>
+    <div id="archivePage" class="page">
+        <div class="card">
+            <h3>📜 Archived Months</h3>
+            <div id="archiveList"></div>
+            <button onclick="archiveAndReset()" style="background:#2f3640; margin-top:20px;">Close & Archive Month</button>
+        </div>
     </div>
 
-    <div class="card">
-        <h3>Add Expense</h3>
-        <select id="mSelect"></select>
-        <input type="number" id="mAmount" placeholder="Amount (৳)">
-        <select id="mCategory">
-            <option value="market">🛒 Market (Meal Based)</option>
-            <option value="fixed">🏠 Fixed (Rent/Bill)</option>
-        </select>
-        <input type="text" id="mReason" placeholder="Reason (e.g. Bazar)">
-        <input type="date" id="mDate">
-        <button onclick="addExpense()">Save Record</button>
+    <div id="helpPage" class="page">
+        <div class="card">
+            <h3>📖 User Manual</h3>
+            <p>১. Home থেকে মেম্বার ও খরচ যোগ করুন।</p>
+            <p>২. Itemized এ মেম্বারের Details থেকে খরচ এডিট ও ডিলেট করা যাবে।</p>
+            <p>৩. Transactions এ চলতি মাসের সকল খরচ দেখা যাবে।</p>
+        </div>
     </div>
 
-    <div id="memberList"></div>
-
-    <div class="card">
-        <h3>Running Month Transactions</h3>
-        <table class="log-table">
-            <thead>
-                <tr><th>Date</th><th>Name</th><th>Reason</th><th>Amount</th></tr>
-            </thead>
-            <tbody id="runningLogTable"></tbody>
-        </table>
+    <div id="settingsPage" class="page">
+        <div class="card">
+            <h3>⚙️ Settings</h3>
+            <input type="text" id="updateGroupName" placeholder="Update Group Name">
+            <div class="pass-container">
+                <input type="password" id="updateGroupPass" placeholder="Update Password">
+                <span class="toggle-btn" onclick="togglePass('updateGroupPass')">SHOW</span>
+            </div>
+            <button onclick="updateGroupSettings()">Update Info</button>
+            <hr>
+            <button onclick="toggleTheme()" style="background:#95a5a6;">🌓 Toggle Dark/Light Mode</button>
+        </div>
     </div>
-
-    <button onclick="archiveAndReset()" style="background:#2f3640; margin-bottom:50px;">Close Month & Archive</button>
 </div>
 
 <script>
     const firebaseConfig = {
-        apiKey: "AIzaSyABY4gQ5-4HW8QlXI2-NfYu...", // Your API Key
+        apiKey: "AIzaSyABY4gQ5-4HW8QlXI2-NfYu...", 
         authDomain: "mess-manager-904f3.firebaseapp.com",
         databaseURL: "https://mess-manager-904f3-default-rtdb.firebaseio.com",
         projectId: "mess-manager-904f3",
@@ -152,19 +223,33 @@
         const pass = localStorage.getItem('mess_group_pass');
         setTimeout(() => {
             if(name && pass) checkLogin(name, pass);
-            else { document.getElementById('splashScreen').style.display='none'; document.getElementById('authScreen').style.display='block'; }
-        }, 1000);
+            else {
+                document.getElementById('splashScreen').style.display='none';
+                document.getElementById('authScreen').style.display='block';
+            }
+        }, 1500);
     };
 
-    function togglePass() {
-        const p = document.getElementById('groupPass');
-        const b = document.querySelector('.toggle-btn');
-        p.type = p.type === "password" ? "text" : "password";
-        b.innerText = p.type === "password" ? "SHOW" : "HIDE";
+    function toggleDashboard() {
+        const db = document.getElementById('mainDashboard');
+        const overlay = document.getElementById('dashboardOverlay');
+        db.classList.toggle('open');
+        overlay.style.display = db.classList.contains('open') ? 'block' : 'none';
     }
 
-    function toggleTheme() {
-        document.body.dataset.theme = document.body.dataset.theme === 'light' ? 'dark' : 'light';
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('page-active'));
+        document.getElementById(pageId + 'Page').classList.add('page-active');
+        const db = document.getElementById('mainDashboard');
+        if(db.classList.contains('open')) toggleDashboard();
+        window.scrollTo(0,0);
+    }
+
+    function togglePass(id) {
+        const p = document.getElementById(id);
+        const btn = p.nextElementSibling;
+        p.type = p.type === "password" ? "text" : "password";
+        btn.innerText = p.type === "password" ? "SHOW" : "HIDE";
     }
 
     function handleAuth() {
@@ -179,21 +264,26 @@
                 localStorage.setItem('mess_group_name', name);
                 localStorage.setItem('mess_group_pass', pass);
                 currentGroupId = name;
+                document.getElementById('displayGroupName').innerText = name.toUpperCase();
                 document.getElementById('splashScreen').style.display='none';
                 document.getElementById('authScreen').style.display='none';
+                document.getElementById('dashboardBtn').style.display='block';
                 document.getElementById('appContainer').style.display='block';
                 startApp();
             } else if(!snap.exists()) {
-                if(confirm("Create Group?")) rootDb.child(name).set({password: pass, members: []}).then(() => checkLogin(name, pass));
-            } else alert("Wrong Password!");
+                if(confirm("Group not found. Create new?")) {
+                    rootDb.child(name).set({password: pass, members: []}).then(() => checkLogin(name, pass));
+                }
+            } else { alert("Incorrect Password!"); logout(); }
         });
     }
 
     function startApp() {
         rootDb.child(currentGroupId).on('value', snap => {
-            const data = snap.val();
+            const data = snap.val() || {};
             render(data.members || []);
             renderRunningLogs(data.members || []);
+            loadArchives();
         });
     }
 
@@ -208,44 +298,26 @@
         });
     }
 
-    function deleteMember(id) {
-        if(confirm("Delete this member?")) {
-            rootDb.child(currentGroupId).child('members').once('value').then(snap => {
-                let m = snap.val() || [];
-                rootDb.child(currentGroupId).child('members').set(m.filter(x => x.id != id));
-            });
-        }
-    }
-
     function addExpense() {
         const id = document.getElementById('mSelect').value;
         const amt = parseFloat(document.getElementById('mAmount').value);
         const cat = document.getElementById('mCategory').value;
         const reason = document.getElementById('mReason').value || "Bazar";
-        const date = document.getElementById('mDate').value || new Date().toLocaleDateString();
+        const date = document.getElementById('mDate').value || new Date().toISOString().split('T')[0];
 
         if(!id || !amt) return alert("Select member and amount");
 
         rootDb.child(currentGroupId).child('members').once('value').then(snap => {
             let members = snap.val();
-            let m = members.find(i => i.id == id);
-            if(cat === 'market') m.marketTotal = (m.marketTotal || 0) + amt;
-            else m.fixedTotal = (m.fixedTotal || 0) + amt;
+            let mIdx = members.findIndex(i => i.id == id);
+            if(cat === 'market') members[mIdx].marketTotal = (members[mIdx].marketTotal || 0) + amt;
+            else members[mIdx].fixedTotal = (members[mIdx].fixedTotal || 0) + amt;
             
-            if(!m.logs) m.logs = [];
-            m.logs.push({date, reason, amt, cat});
+            if(!members[mIdx].logs) members[mIdx].logs = [];
+            members[mIdx].logs.push({id: Date.now(), date, reason, amt, cat});
             rootDb.child(currentGroupId).child('members').set(members);
             document.getElementById('mAmount').value = "";
             document.getElementById('mReason').value = "";
-        });
-    }
-
-    function updateMeals(id, val) {
-        rootDb.child(currentGroupId).child('members').once('value').then(snap => {
-            let members = snap.val();
-            let m = members.find(i => i.id == id);
-            m.meals = parseFloat(val) || 0;
-            rootDb.child(currentGroupId).child('members').set(members);
         });
     }
 
@@ -263,8 +335,8 @@
         const mRate = tMeal > 0 ? tMark / tMeal : 0;
         const fPer = members.length > 0 ? tFix / members.length : 0;
 
-        document.getElementById('totalMarket').innerText = "৳ " + tMark;
-        document.getElementById('totalFixed').innerText = "৳ " + tFix;
+        document.getElementById('totalMarket').innerText = "৳ " + tMark.toFixed(1);
+        document.getElementById('totalFixed').innerText = "৳ " + tFix.toFixed(1);
         document.getElementById('totalMeals').innerText = tMeal;
         document.getElementById('mealRate').innerText = "৳ " + mRate.toFixed(2);
 
@@ -279,36 +351,77 @@
 
             list.innerHTML += `
                 <div class="card">
-                    <div style="display:flex; justify-content:space-between;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
                         <b>${m.name}</b>
-                        <span style="font-size:12px;">Meals: <input type="number" value="${m.meals || 0}" step="0.5" style="width:50px; padding:2px;" onchange="updateMeals(${m.id}, this.value)"></span>
+                        <span style="font-size:11px;">Meals: <input type="number" value="${m.meals || 0}" step="0.5" style="width:45px; padding:2px; margin:0" onchange="updateMeals(${m.id}, this.value)"></span>
                     </div>
-                    <div style="font-size:12px; margin-top:8px;">
-                        Spent: ৳ ${spent} | Personal Cost: ৳ ${cost.toFixed(2)}<br>
+                    <div style="font-size:11px; margin-top:8px;">
+                        Spent: ৳ ${spent.toFixed(1)} | Cost: ৳ ${cost.toFixed(1)}<br>
                         <span class="status-badge ${bal >= 0 ? 'get' : 'give'}">
-                            ${bal >= 0 ? 'Will Get: ৳' + bal.toFixed(2) : 'Must Give: ৳' + Math.abs(bal).toFixed(2)}
+                            ${bal >= 0 ? 'Get: ৳' + bal.toFixed(1) : 'Give: ৳' + Math.abs(bal).toFixed(1)}
                         </span>
                     </div>
-                    <div style="margin-top:10px;">
-                        <button onclick="toggleDetails(${m.id})" style="background:#eee; color:#333; width:auto; padding:5px 10px; font-size:11px;">Details</button>
-                        <button onclick="deleteMember(${m.id})" style="background:none; color:var(--danger); font-size:11px; width:auto;">Remove</button>
+                    <div style="margin-top:10px; display:flex; gap:10px;">
+                        <button onclick="toggleDetails(${m.id})" style="background:#eee; color:#333; padding:5px 8px; font-size:10px; width:auto;">Details</button>
+                        <button onclick="deleteMember(${m.id})" style="background:none; color:var(--danger); font-size:10px; width:auto; padding:0">Remove</button>
                     </div>
-                    <div id="details-${m.id}" class="history-panel">
-                        <strong>Expense Details:</strong>
+                    <div id="details-${m.id}" style="display:none; margin-top:10px; border-top:1px solid #eee;">
                         <table class="log-table">
-                            ${(m.logs || []).map(l => `<tr><td>${l.date}</td><td>${l.reason}</td><td>৳${l.amt}</td></tr>`).join('')}
+                            ${(m.logs || []).map(l => `
+                                <tr>
+                                    <td>${l.date}</td><td>${l.reason}</td><td>৳${l.amt}</td>
+                                    <td>
+                                        <button class="action-btn edit-btn" onclick="editExpense(${m.id}, ${l.id})">✎</button>
+                                        <button class="action-btn del-btn" onclick="deleteExpense(${m.id}, ${l.id})">✖</button>
+                                    </td>
+                                </tr>`).join('')}
                         </table>
                     </div>
                 </div>`;
         });
     }
 
+    function editExpense(mid, lid, isArchive = false, arcMonth = "") {
+        const newAmt = prompt("Enter new amount:");
+        if(!newAmt || isNaN(newAmt)) return;
+        
+        let path = isArchive ? `archives/${arcMonth}` : 'members';
+        rootDb.child(currentGroupId).child(path).once('value').then(snap => {
+            let members = snap.val();
+            let mIdx = members.findIndex(m => m.id == mid);
+            let lIdx = members[mIdx].logs.findIndex(l => l.id == lid);
+            let log = members[mIdx].logs[lIdx];
+            
+            if(log.cat === 'market') members[mIdx].marketTotal = (members[mIdx].marketTotal - log.amt) + parseFloat(newAmt);
+            else members[mIdx].fixedTotal = (members[mIdx].fixedTotal - log.amt) + parseFloat(newAmt);
+            
+            members[mIdx].logs[lIdx].amt = parseFloat(newAmt);
+            rootDb.child(currentGroupId).child(path).set(members);
+        });
+    }
+
+    function deleteExpense(mid, lid, isArchive = false, arcMonth = "") {
+        if(!confirm("Delete this record?")) return;
+        let path = isArchive ? `archives/${arcMonth}` : 'members';
+        rootDb.child(currentGroupId).child(path).once('value').then(snap => {
+            let members = snap.val();
+            let mIdx = members.findIndex(m => m.id == mid);
+            let lIdx = members[mIdx].logs.findIndex(l => l.id == lid);
+            let log = members[mIdx].logs[lIdx];
+            
+            if(log.cat === 'market') members[mIdx].marketTotal -= log.amt;
+            else members[mIdx].fixedTotal -= log.amt;
+            
+            members[mIdx].logs.splice(lIdx, 1);
+            rootDb.child(currentGroupId).child(path).set(members);
+        });
+    }
+
     function renderRunningLogs(members) {
         let allLogs = [];
-        members.forEach(m => {
-            if(m.logs) m.logs.forEach(l => allLogs.push({...l, name: m.name}));
-        });
+        members.forEach(m => { if(m.logs) m.logs.forEach(l => allLogs.push({...l, name: m.name})); });
         allLogs.sort((a,b) => new Date(b.date) - new Date(a.date));
+        // Showing ALL logs of the running month
         document.getElementById('runningLogTable').innerHTML = allLogs.map(l => `
             <tr><td>${l.date}</td><td>${l.name}</td><td>${l.reason}</td><td>৳${l.amt}</td></tr>
         `).join('');
@@ -319,10 +432,22 @@
         el.style.display = el.style.display === 'block' ? 'none' : 'block';
     }
 
-    function toggleArchive() {
-        const el = document.getElementById('archiveSection');
-        el.style.display = el.style.display === 'block' ? 'none' : 'block';
-        if(el.style.display === 'block') loadArchives();
+    function deleteMember(id) {
+        if(confirm("Remove Member?")) {
+            rootDb.child(currentGroupId).child('members').once('value').then(snap => {
+                let m = snap.val() || [];
+                rootDb.child(currentGroupId).child('members').set(m.filter(x => x.id != id));
+            });
+        }
+    }
+
+    function updateMeals(id, val) {
+        rootDb.child(currentGroupId).child('members').once('value').then(snap => {
+            let members = snap.val();
+            let mIdx = members.findIndex(i => i.id == id);
+            members[mIdx].meals = parseFloat(val) || 0;
+            rootDb.child(currentGroupId).child('members').set(members);
+        });
     }
 
     function loadArchives() {
@@ -331,22 +456,37 @@
             const list = document.getElementById('archiveList');
             if(!arc) { list.innerHTML = "No history found."; return; }
             list.innerHTML = Object.keys(arc).map(month => `
-                <div style="border-bottom:1px solid #ddd; padding:10px;">
-                    <b>Month: ${month}</b> <button onclick="viewArchiveDetails('${month}')" style="width:auto; padding:2px 10px; font-size:10px; margin-left:10px;">View</button>
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <b>${month}</b>
+                        <button onclick="toggleArcDetails('${month}')" style="width:auto; padding:5px 10px; font-size:11px;">View Details</button>
+                    </div>
+                    <div id="arc-detail-${month.replace(/\s/g, '')}" style="display:none; margin-top:10px; border-top:1px solid #ddd; padding-top:10px;">
+                        ${arc[month].map(m => `
+                            <div style="margin-bottom:10px;">
+                                <strong>${m.name}</strong> - Spent: ৳${((m.marketTotal||0)+(m.fixedTotal||0)).toFixed(1)}
+                                <table class="log-table">
+                                    ${(m.logs || []).map(l => `
+                                        <tr>
+                                            <td>${l.date}</td><td>${l.reason}</td><td>৳${l.amt}</td>
+                                            <td>
+                                                <button class="action-btn edit-btn" onclick="editExpense(${m.id}, ${l.id}, true, '${month}')">✎</button>
+                                                <button class="action-btn del-btn" onclick="deleteExpense(${m.id}, ${l.id}, true, '${month}')">✖</button>
+                                            </td>
+                                        </tr>`).join('')}
+                                </table>
+                            </div>
+                        `).join('')}
+                    </div>
                 </div>
             `).join('');
         });
     }
 
-    function viewArchiveDetails(month) {
-        rootDb.child(currentGroupId).child('archives').child(month).once('value', snap => {
-            const members = snap.val();
-            let txt = `Month: ${month}\n\n`;
-            members.forEach(m => {
-                txt += `${m.name}: Spent ৳${(m.marketTotal||0)+(m.fixedTotal||0)}, Meals: ${m.meals}\n`;
-            });
-            alert(txt);
-        });
+    function toggleArcDetails(month) {
+        const id = `arc-detail-${month.replace(/\s/g, '')}`;
+        const el = document.getElementById(id);
+        el.style.display = el.style.display === 'block' ? 'none' : 'block';
     }
 
     function archiveAndReset() {
@@ -354,16 +494,38 @@
         if(!month) return;
         rootDb.child(currentGroupId).child('members').once('value').then(snap => {
             const data = snap.val();
-            if(!data) return;
             rootDb.child(currentGroupId).child('archives').child(month).set(data).then(() => {
                 const reset = data.map(m => ({ ...m, marketTotal: 0, fixedTotal: 0, meals: 0, logs: [] }));
                 rootDb.child(currentGroupId).child('members').set(reset);
-                alert("Month Closed and Archived!");
+                alert("Month Archived Successfully!");
             });
         });
     }
 
-    function logout() { localStorage.clear(); location.reload(); }
+    function updateGroupSettings() {
+        const newName = document.getElementById('updateGroupName').value.trim().toLowerCase();
+        const newPass = document.getElementById('updateGroupPass').value.trim();
+        if(!newName || !newPass) return alert("Fill all fields");
+        rootDb.child(currentGroupId).once('value', snap => {
+            const data = snap.val();
+            data.password = newPass;
+            rootDb.child(newName).set(data).then(() => {
+                if(newName !== currentGroupId) rootDb.child(currentGroupId).remove();
+                localStorage.setItem('mess_group_name', newName);
+                localStorage.setItem('mess_group_pass', newPass);
+                location.reload();
+            });
+        });
+    }
+
+    function toggleTheme() {
+        document.body.dataset.theme = document.body.dataset.theme === 'light' ? 'dark' : 'light';
+    }
+
+    function logout() {
+        localStorage.clear();
+        location.reload();
+    }
 </script>
 </body>
-                </html>
+</html>
