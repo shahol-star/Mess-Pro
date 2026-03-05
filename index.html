@@ -22,7 +22,6 @@
         }
         body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; transition: 0.3s; padding-bottom: 50px; }
         
-        /* Menu Styling - White Background */
         .dashboard-btn {
             position: fixed; top: 15px; left: 15px; z-index: 1001;
             background: var(--p-color); color: white; padding: 8px 12px;
@@ -45,7 +44,6 @@
         }
         .nav-item:active { background: #f1f2f6; }
 
-        /* Header Styling */
         .page-header { text-align: center; padding: 20px 0 10px 0; }
         .app-title { font-weight: 600; font-size: 28px; color: var(--p-color); margin: 5px 0; }
         .crafted-by { font-family: 'Dancing Script', cursive; font-size: 16px; color: #7f8c8d; display: block; margin-bottom: 15px; }
@@ -133,7 +131,7 @@
             <div class="sum-card" style="background:#e3f2fd; color:#0d47a1;">Market<br><span id="totalMarket">৳ 0</span></div>
             <div class="sum-card" style="background:#f3e5f5; color:#4a148c;">Fixed<br><span id="totalFixed">৳ 0</span></div>
             <div class="sum-card" style="background:#e8f5e9; color:#1b5e20;">Meals<br><span id="totalMeals">0</span></div>
-            <div class="sum-card" style="background:#fff3e0; color:#e65100;">Meal Rate<br><span id="mealRate">৳ 0</span></div>
+            <div class="sum-card" style="background:#fff3e0; color:#e65100;"> Meal Rate<br><span id="mealRate">৳ 0</span></div>
         </div>
         <div class="card">
             <h3>Add Member</h3>
@@ -260,21 +258,27 @@
 
     function checkLogin(name, pass) {
         rootDb.child(name).once('value', snap => {
-            if(snap.exists() && snap.val().password === pass) {
-                localStorage.setItem('mess_group_name', name);
-                localStorage.setItem('mess_group_pass', pass);
-                currentGroupId = name;
-                document.getElementById('displayGroupName').innerText = name.toUpperCase();
-                document.getElementById('splashScreen').style.display='none';
-                document.getElementById('authScreen').style.display='none';
-                document.getElementById('dashboardBtn').style.display='block';
-                document.getElementById('appContainer').style.display='block';
-                startApp();
-            } else if(!snap.exists()) {
-                if(confirm("Group not found. Create new?")) {
-                    rootDb.child(name).set({password: pass, members: []}).then(() => checkLogin(name, pass));
+            if(snap.exists()) {
+                if(snap.val().password === pass) {
+                    localStorage.setItem('mess_group_name', name);
+                    localStorage.setItem('mess_group_pass', pass);
+                    currentGroupId = name;
+                    document.getElementById('displayGroupName').innerText = name.toUpperCase();
+                    document.getElementById('splashScreen').style.display='none';
+                    document.getElementById('authScreen').style.display='none';
+                    document.getElementById('dashboardBtn').style.display='block';
+                    document.getElementById('appContainer').style.display='block';
+                    startApp();
+                } else {
+                    alert("Incorrect Password for this group name!");
                 }
-            } else { alert("Incorrect Password!"); logout(); }
+            } else {
+                if(confirm("Group '" + name + "' does not exist. Do you want to create it?")) {
+                    rootDb.child(name).set({password: pass, members: []}).then(() => {
+                        checkLogin(name, pass);
+                    });
+                }
+            }
         });
     }
 
@@ -421,7 +425,6 @@
         let allLogs = [];
         members.forEach(m => { if(m.logs) m.logs.forEach(l => allLogs.push({...l, name: m.name})); });
         allLogs.sort((a,b) => new Date(b.date) - new Date(a.date));
-        // Showing ALL logs of the running month
         document.getElementById('runningLogTable').innerHTML = allLogs.map(l => `
             <tr><td>${l.date}</td><td>${l.name}</td><td>${l.reason}</td><td>৳${l.amt}</td></tr>
         `).join('');
@@ -506,15 +509,23 @@
         const newName = document.getElementById('updateGroupName').value.trim().toLowerCase();
         const newPass = document.getElementById('updateGroupPass').value.trim();
         if(!newName || !newPass) return alert("Fill all fields");
-        rootDb.child(currentGroupId).once('value', snap => {
-            const data = snap.val();
-            data.password = newPass;
-            rootDb.child(newName).set(data).then(() => {
-                if(newName !== currentGroupId) rootDb.child(currentGroupId).remove();
-                localStorage.setItem('mess_group_name', newName);
-                localStorage.setItem('mess_group_pass', newPass);
-                location.reload();
-            });
+        
+        // Checking if new name already taken by another group
+        rootDb.child(newName).once('value', snap => {
+            if(snap.exists() && newName !== currentGroupId) {
+                alert("This group name is already taken. Please choose another one.");
+            } else {
+                rootDb.child(currentGroupId).once('value', snapOld => {
+                    const data = snapOld.val();
+                    data.password = newPass;
+                    rootDb.child(newName).set(data).then(() => {
+                        if(newName !== currentGroupId) rootDb.child(currentGroupId).remove();
+                        localStorage.setItem('mess_group_name', newName);
+                        localStorage.setItem('mess_group_pass', newPass);
+                        location.reload();
+                    });
+                });
+            }
         });
     }
 
@@ -528,4 +539,4 @@
     }
 </script>
 </body>
-</html>
+                </html>
