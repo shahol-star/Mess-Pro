@@ -470,11 +470,15 @@
                 rootDb.child(currentGroupId).once('value', sOld => {
                     const data = sOld.val();
                     data.password = newP;
+                    
+                    // এখানে পুরাতন নাম ডিলিট করার লজিক যোগ করা হয়েছে
                     rootDb.child(newN).set(data).then(() => {
-                        if(newN !== currentGroupId) rootDb.child(currentGroupId).remove();
+                        if(newN !== currentGroupId) {
+                            rootDb.child(currentGroupId).remove(); // পুরাতন গ্রুপ ডেটাবেস থেকে মুছে ফেলা হলো
+                        }
                         localStorage.setItem('mess_group_name', newN);
                         localStorage.setItem('mess_group_pass', newP);
-                        alert("Group Updated & Migrated!");
+                        alert("Group Updated & Migrated! Old name is no longer accessible.");
                         location.reload();
                     });
                 });
