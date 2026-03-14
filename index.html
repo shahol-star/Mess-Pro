@@ -16,9 +16,12 @@
             --p-color: #00a8ff; --bg: #f0f2f5; --card: #ffffff; 
             --text: #2f3640; --danger: #ff7675; --safe: #2ecc71;
         }
-        [data-theme="dark"] {
-            --bg: #1e272e; --card: #2f3640; --text: #f5f6fa;
-        }
+        /* Themes */
+        [data-theme="dark"] { --bg: #1e272e; --card: #2f3640; --text: #f5f6fa; }
+        [data-theme="midnight"] { --bg: #2c3e50; --card: #34495e; --text: #ecf0f1; --p-color: #e67e22; }
+        [data-theme="forest"] { --bg: #1b3022; --card: #264130; --text: #e8f5e9; --p-color: #2ecc71; }
+        [data-theme="rose"] { --bg: #fdf2f2; --card: #ffffff; --text: #4a0e0e; --p-color: #e84393; }
+
         body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; transition: 0.3s; padding-bottom: 50px; }
         
         .dashboard-btn {
@@ -28,7 +31,7 @@
         }
         .dashboard {
             position: fixed; top: 0; left: -100%; width: 250px; height: 100%;
-            background: #ffffff; z-index: 1002; transition: 0.3s;
+            background: var(--card); z-index: 1002; transition: 0.3s;
             display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
         }
@@ -38,10 +41,10 @@
             background: rgba(0,0,0,0.5); z-index: 1001; display: none;
         }
         .nav-item {
-            color: #2f3640; font-size: 15px; font-weight: 600; cursor: pointer;
-            padding: 12px; border-bottom: 1px solid #f1f2f6; transition: 0.2s;
+            color: var(--text); font-size: 15px; font-weight: 600; cursor: pointer;
+            padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.1); transition: 0.2s;
         }
-        .nav-item:active { background: #f1f2f6; }
+        .nav-item:active { background: rgba(0,0,0,0.05); }
         .page-header { text-align: center; padding: 20px 0 10px 0; }
         .app-title { font-weight: 600; font-size: 28px; color: var(--p-color); margin: 5px 0; }
         .crafted-by { font-family: 'Dancing Script', cursive; font-size: 16px; color: #7f8c8d; display: block; margin-bottom: 15px; }
@@ -54,7 +57,7 @@
         
         .card { background: var(--card); padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
         
-        input, select, button { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; box-sizing: border-box; background: var(--card); color: var(--text); font-family: 'Georgia', serif; }
+        input, select, button { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; box-sizing: border-box; background: var(--card); color: var(--text); font-family: 'Poppins', sans-serif; }
         button { background: var(--p-color); color: white; border: none; font-weight: 600; cursor: pointer; }
         
         .pass-container { position: relative; width: 100%; }
@@ -71,6 +74,8 @@
         .action-btn { font-size: 10px; padding: 3px 6px; border-radius: 3px; border: none; cursor: pointer; margin-left: 2px; }
         .edit-btn { background: #f1c40f; color: #000; }
         .del-btn { background: #e74c3c; color: #fff; }
+        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .theme-btn { padding: 8px; font-size: 12px; }
     </style>
 </head>
 <body data-theme="light">
@@ -95,6 +100,7 @@
     <div class="nav-item" onclick="showPage('settings')">Settings</div>
     <div class="nav-item" style="color: #ff7675; margin-top: auto;" onclick="logout()">Logout</div>
 </div>
+
 <div id="authScreen" class="container" style="display:none; margin-top:60px;">
     <div class="card" style="text-align:center;">
         <img src="https://cdn-icons-png.flaticon.com/512/10149/10149458.png" width="60">
@@ -108,6 +114,7 @@
         <button onclick="handleAuth()" style="margin-top:10px;">Enter Group</button>
     </div>
 </div>
+
 <div id="appContainer" class="container">
     <div class="page-header">
         <img src="https://cdn-icons-png.flaticon.com/512/10149/10149458.png" width="50">
@@ -115,6 +122,7 @@
         <span class="crafted-by">Crafted By: Shahol Mahmud</span>
         <div style="font-size: 13px; font-weight:600;">Group: <span id="displayGroupName" style="color:var(--p-color)">...</span></div>
     </div>
+
     <div id="homePage" class="page page-active">
         <div class="summary-grid">
             <div class="sum-card" style="background:#e3f2fd; color:#0d47a1;">Market<br><span id="totalMarket">৳ 0</span></div>
@@ -140,10 +148,12 @@
             <button onclick="addExpense()">Save Record</button>
         </div>
     </div>
+
     <div id="itemizedPage" class="page">
         <h3 style="text-align: center;">Member Calculations</h3>
         <div id="memberList"></div>
     </div>
+
     <div id="transactionsPage" class="page">
         <div class="card">
             <h3>Running Month Transactions</h3>
@@ -155,6 +165,7 @@
             </table>
         </div>
     </div>
+
     <div id="archivePage" class="page">
         <div class="card">
             <h3>📜 Archived Months</h3>
@@ -162,28 +173,30 @@
             <button onclick="archiveAndReset()" style="background:#2f3640; margin-top:20px;">Close & Archive Month</button>
         </div>
     </div>
-<div id="helpPage" class="page">
-    <div class="card">
-        <h3 style="text-align: center; color: var(--p-color);">📖 User Manual (ব্যবহার নির্দেশিকা)</h3>
-        <hr style="border: 0.5px solid #eee; margin-bottom: 15px;">
-        
-        <div style="font-size: 14px; line-height: 1.6;">
-            <p><b>১. 🏠 Home (হোম):</b> এখানে নতুন মেম্বার যোগ করুন এবং প্রতিদিনের বাজারের খরচ বা ফিক্সড বিল (ভাড়া/কারেন্ট বিল) এন্ট্রি দিন।</p>
+
+    <div id="helpPage" class="page">
+        <div class="card">
+            <h3 style="text-align: center; color: var(--p-color);">📖 User Manual (ব্যবহার নির্দেশিকা)</h3>
+            <hr style="border: 0.5px solid #eee; margin-bottom: 15px;">
             
-            <p><b>২. 📊 Itemized (হিসাব):</b> এখানে প্রত্যেকের আলাদা আলাদা খরচ, মিল রেট এবং কার কত টাকা জমা বা বকেয়া আছে তা দেখতে পাবেন। <b>'Details'</b> বাটনে ক্লিক করে নির্দিষ্ট খরচ এডিট বা ডিলিট করা যাবে।</p>
+            <div style="font-size: 14px; line-height: 1.6;">
+                <p><b>১. 🏠 Home (হোম):</b> এখানে নতুন মেম্বার যোগ করুন এবং প্রতিদিনের বাজারের খরচ বা ফিক্সড বিল (ভাড়া/কারেন্ট বিল) এন্ট্রি দিন।</p>
+                
+                <p><b>২. 📊 Itemized (হিসাব):</b> এখানে প্রত্যেকের আলাদা আলাদা খরচ, মিল রেট এবং কার কত টাকা জমা বা বকেয়া আছে তা দেখতে পাবেন। <b>'Details'</b> বাটনে ক্লিক করে নির্দিষ্ট খরচ এডিট বা ডিলিট করা যাবে।</p>
+                
+                <p><b>৩. 💸 Transactions (লেনদেন):</b> চলতি মাসে মোট কতগুলো এন্ট্রি দেওয়া হয়েছে তার একটি তালিকা এখানে পাওয়া যাবে।</p>
+                
+                <p><b>৪. 📜 Archive (আর্কাইভ):</b> মাস শেষ হলে <b>'Close & Archive Month'</b> বাটনে ক্লিক করে পুরো মাসের হিসাব সেভ করে রাখতে পারবেন। এটি করলে হোম পেজ আবার নতুন মাসের জন্য জিরো (০) হয়ে যাবে।</p>
+                
+                <p><b>৫. ⚙️ Settings (সেটিংস):</b> এখান থেকে গ্রুপের নাম বা পাসওয়ার্ড পরিবর্তন করা যাবে এবং ডার্ক মোড অন করা যাবে।</p>
+            </div>
             
-            <p><b>৩. 💸 Transactions (লেনদেন):</b> চলতি মাসে মোট কতগুলো এন্ট্রি দেওয়া হয়েছে তার একটি তালিকা এখানে পাওয়া যাবে।</p>
-            
-            <p><b>৪. 📜 Archive (আর্কাইভ):</b> মাস শেষ হলে <b>'Close & Archive Month'</b> বাটনে ক্লিক করে পুরো মাসের হিসাব সেভ করে রাখতে পারবেন। এটি করলে হোম পেজ আবার নতুন মাসের জন্য জিরো (০) হয়ে যাবে।</p>
-            
-            <p><b>৫. ⚙️ Settings (সেটিংস):</b> এখান থেকে গ্রুপের নাম বা পাসওয়ার্ড পরিবর্তন করা যাবে এবং ডার্ক মোড অন করা যাবে।</p>
-        </div>
-        
-        <div style="margin-top: 15px; padding: 10px; background: rgba(0, 168, 255, 0.1); border-radius: 8px; font-size: 12px; text-align: center;">
-            💡 <i>সঠিক হিসাবের জন্য প্রতিদিনের মিল (Meal) সংখ্যা আপডেট করতে ভুলবেন না!</i>
+            <div style="margin-top: 15px; padding: 10px; background: rgba(0, 168, 255, 0.1); border-radius: 8px; font-size: 12px; text-align: center;">
+                💡 <i>সঠিক হিসাবের জন্য প্রতিদিনের মিল (Meal) সংখ্যা আপডেট করতে ভুলবেন না!</i>
+            </div>
         </div>
     </div>
-</div>
+
     <div id="settingsPage" class="page">
         <div class="card">
             <h3>⚙️ Settings</h3>
@@ -194,11 +207,20 @@
             </div>
             <button onclick="updateGroupSettings()">Update Info</button>
             <hr>
-            <button onclick="toggleTheme()" style="background:#95a5a6;">🌓 Toggle Dark/Light Mode</button>
+            <h3>🎨 Choose Theme</h3>
+            <div class="theme-grid">
+                <button class="theme-btn" onclick="setTheme('light')" style="background:#eee; color:#333;">☀️ Light</button>
+                <button class="theme-btn" onclick="setTheme('dark')" style="background:#2f3640;">🌙 Dark</button>
+                <button class="theme-btn" onclick="setTheme('midnight')" style="background:#2c3e50;">🌌 Midnight</button>
+                <button class="theme-btn" onclick="setTheme('forest')" style="background:#1b3022;">🌲 Forest</button>
+                <button class="theme-btn" onclick="setTheme('rose')" style="background:#e84393;">🌸 Rose</button>
+            </div>
         </div>
     </div>
 </div>
+
 <script>
+    // Firebase Config
     const firebaseConfig = {
         apiKey: "AIzaSyABY4gQ5-4HW8QlXI2-NfYu...", 
         authDomain: "mess-manager-904f3.firebaseapp.com",
@@ -210,10 +232,18 @@
     };
     firebase.initializeApp(firebaseConfig);
     const rootDb = firebase.database().ref("v3_groups");
+    
+    // Bad words list
+    const badWords = ["khanki", "magi", "bal", "chuda", "sala", "shala", "fuck", "bitch"]; 
+    
     let currentGroupId = "";
+
     window.onload = () => {
         const name = localStorage.getItem('mess_group_name');
         const pass = localStorage.getItem('mess_group_pass');
+        const savedTheme = localStorage.getItem('mess_theme') || 'light';
+        setTheme(savedTheme);
+
         setTimeout(() => {
             if(name && pass) checkLogin(name, pass);
             else {
@@ -222,12 +252,23 @@
             }
         }, 1500);
     };
+
+    function isBad(str) {
+        return badWords.some(word => str.toLowerCase().includes(word));
+    }
+
+    function setTheme(theme) {
+        document.body.dataset.theme = theme;
+        localStorage.setItem('mess_theme', theme);
+    }
+
     function toggleDashboard() {
         const db = document.getElementById('mainDashboard');
         const overlay = document.getElementById('dashboardOverlay');
         db.classList.toggle('open');
         overlay.style.display = db.classList.contains('open') ? 'block' : 'none';
     }
+
     function showPage(pageId) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('page-active'));
         document.getElementById(pageId + 'Page').classList.add('page-active');
@@ -235,42 +276,50 @@
         if(db.classList.contains('open')) toggleDashboard();
         window.scrollTo(0,0);
     }
+
     function togglePass(id) {
         const p = document.getElementById(id);
         const btn = p.nextElementSibling;
         p.type = p.type === "password" ? "text" : "password";
         btn.innerText = p.type === "password" ? "SHOW" : "HIDE";
     }
+
     function handleAuth() {
         const name = document.getElementById('groupName').value.trim().toLowerCase();
         const pass = document.getElementById('groupPass').value.trim();
-        if(name && pass) checkLogin(name, pass);
+        if(!name || !pass) return alert("Fields cannot be empty");
+        if(isBad(name)) return alert("বাজে শব্দ ব্যবহার করা যাবে না!");
+        checkLogin(name, pass);
     }
+
     function checkLogin(name, pass) {
         rootDb.child(name).once('value', snap => {
             if(snap.exists()) {
                 if(snap.val().password === pass) {
-                    localStorage.setItem('mess_group_name', name);
-                    localStorage.setItem('mess_group_pass', pass);
                     currentGroupId = name;
-                    document.getElementById('displayGroupName').innerText = name.toUpperCase();
-                    document.getElementById('splashScreen').style.display='none';
-                    document.getElementById('authScreen').style.display='none';
-                    document.getElementById('dashboardBtn').style.display='block';
-                    document.getElementById('appContainer').style.display='block';
-                    startApp();
+                    loginSuccess(name, pass);
                 } else {
-                    alert("Incorrect Password for this group name!");
+                    alert("Incorrect Password!");
                 }
             } else {
-                if(confirm("Group '" + name + "' does not exist. Do you want to create it?")) {
-                    rootDb.child(name).set({password: pass, members: []}).then(() => {
-                        checkLogin(name, pass);
-                    });
+                if(confirm("Group '" + name + "' does not exist. Create it?")) {
+                    rootDb.child(name).set({password: pass, members: []}).then(() => checkLogin(name, pass));
                 }
             }
         });
     }
+
+    function loginSuccess(name, pass) {
+        localStorage.setItem('mess_group_name', name);
+        localStorage.setItem('mess_group_pass', pass);
+        document.getElementById('displayGroupName').innerText = name.toUpperCase();
+        document.getElementById('splashScreen').style.display='none';
+        document.getElementById('authScreen').style.display='none';
+        document.getElementById('dashboardBtn').style.display='block';
+        document.getElementById('appContainer').style.display='block';
+        startApp();
+    }
+
     function startApp() {
         rootDb.child(currentGroupId).on('value', snap => {
             const data = snap.val() || {};
@@ -279,6 +328,7 @@
             loadArchives();
         });
     }
+
     function addMember() {
         const name = document.getElementById('newMemberName').value.trim();
         if(!name) return;
@@ -289,6 +339,7 @@
             document.getElementById('newMemberName').value = "";
         });
     }
+
     function addExpense() {
         const id = document.getElementById('mSelect').value;
         const amt = parseFloat(document.getElementById('mAmount').value);
@@ -301,7 +352,6 @@
             let mIdx = members.findIndex(i => i.id == id);
             if(cat === 'market') members[mIdx].marketTotal = (members[mIdx].marketTotal || 0) + amt;
             else members[mIdx].fixedTotal = (members[mIdx].fixedTotal || 0) + amt;
-            
             if(!members[mIdx].logs) members[mIdx].logs = [];
             members[mIdx].logs.push({id: Date.now(), date, reason, amt, cat});
             rootDb.child(currentGroupId).child('members').set(members);
@@ -309,15 +359,12 @@
             document.getElementById('mReason').value = "";
         });
     }
+
     function render(members) {
         const list = document.getElementById('memberList');
         const select = document.getElementById('mSelect');
         let tMark = 0, tFix = 0, tMeal = 0;
-        members.forEach(m => {
-            tMark += (m.marketTotal || 0);
-            tFix += (m.fixedTotal || 0);
-            tMeal += (m.meals || 0);
-        });
+        members.forEach(m => { tMark += (m.marketTotal || 0); tFix += (m.fixedTotal || 0); tMeal += (m.meals || 0); });
         const mRate = tMeal > 0 ? tMark / tMeal : 0;
         const fPer = members.length > 0 ? tFix / members.length : 0;
         document.getElementById('totalMarket').innerText = "৳ " + tMark.toFixed(1);
@@ -331,178 +378,111 @@
             const spent = (m.marketTotal || 0) + (m.fixedTotal || 0);
             const cost = (m.meals * mRate) + fPer;
             const bal = spent - cost;
-            list.innerHTML += `
-                <div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <b>${m.name}</b>
-                        <span style="font-size:11px;">Meals: <input type="number" value="${m.meals || 0}" step="0.5" style="width:45px; padding:2px; margin:0" onchange="updateMeals(${m.id}, this.value)"></span>
-                    </div>
-                    <div style="font-size:11px; margin-top:8px;">
-                        Spent: ৳ ${spent.toFixed(1)} | Cost: ৳ ${cost.toFixed(1)}<br>
-                        <span class="status-badge ${bal >= 0 ? 'get' : 'give'}">
-                            ${bal >= 0 ? 'Get: ৳' + bal.toFixed(1) : 'Give: ৳' + Math.abs(bal).toFixed(1)}
-                        </span>
-                    </div>
-                    <div style="margin-top:10px; display:flex; gap:10px;">
-                        <button onclick="toggleDetails(${m.id})" style="background:#eee; color:#333; padding:5px 8px; font-size:10px; width:auto;">Details</button>
-                        <button onclick="deleteMember(${m.id})" style="background:none; color:var(--danger); font-size:10px; width:auto; padding:0">Remove</button>
-                    </div>
-                    <div id="details-${m.id}" style="display:none; margin-top:10px; border-top:1px solid #eee;">
-                        <table class="log-table">
-                            ${(m.logs || []).map(l => `
-                                <tr>
-                                    <td>${l.date}</td><td>${l.reason}</td><td>৳${l.amt}</td>
-                                    <td>
-                                        <button class="action-btn edit-btn" onclick="editExpense(${m.id}, ${l.id})">✎</button>
-                                        <button class="action-btn del-btn" onclick="deleteExpense(${m.id}, ${l.id})">✖</button>
-                                    </td>
-                                </tr>`).join('')}
-                        </table>
-                    </div>
-                </div>`;
+            list.innerHTML += `<div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <b>${m.name}</b>
+                    <span style="font-size:11px;">Meals: <input type="number" value="${m.meals || 0}" step="0.5" style="width:45px; padding:2px; margin:0" onchange="updateMeals(${m.id}, this.value)"></span>
+                </div>
+                <div style="font-size:11px; margin-top:8px;">Spent: ৳ ${spent.toFixed(1)} | Cost: ৳ ${cost.toFixed(1)}<br>
+                    <span class="status-badge ${bal >= 0 ? 'get' : 'give'}">${bal >= 0 ? 'Get: ৳' + bal.toFixed(1) : 'Give: ৳' + Math.abs(bal).toFixed(1)}</span>
+                </div>
+                <div style="margin-top:10px; display:flex; gap:10px;">
+                    <button onclick="toggleDetails(${m.id})" style="background:#eee; color:#333; padding:5px 8px; font-size:10px; width:auto;">Details</button>
+                    <button onclick="deleteMember(${m.id})" style="background:none; color:var(--danger); font-size:10px; width:auto; padding:0">Remove</button>
+                </div>
+                <div id="details-${m.id}" style="display:none; margin-top:10px; border-top:1px solid #eee;">
+                    <table class="log-table">
+                        ${(m.logs || []).map(l => `<tr><td>${l.date}</td><td>${l.reason}</td><td>৳${l.amt}</td><td>
+                        <button class="action-btn edit-btn" onclick="editExpense(${m.id}, ${l.id})">✎</button>
+                        <button class="action-btn del-btn" onclick="deleteExpense(${m.id}, ${l.id})">✖</button></td></tr>`).join('')}
+                    </table>
+                </div>
+            </div>`;
         });
     }
-    function editExpense(mid, lid, isArchive = false, arcMonth = "") {
-        const newAmt = prompt("Enter new amount:");
-        if(!newAmt || isNaN(newAmt)) return;
-        
-        let path = isArchive ? `archives/${arcMonth}` : 'members';
-        rootDb.child(currentGroupId).child(path).once('value').then(snap => {
-            let members = snap.val();
-            let mIdx = members.findIndex(m => m.id == mid);
-            let lIdx = members[mIdx].logs.findIndex(l => l.id == lid);
-            let log = members[mIdx].logs[lIdx];
-            
-            if(log.cat === 'market') members[mIdx].marketTotal = (members[mIdx].marketTotal - log.amt) + parseFloat(newAmt);
-            else members[mIdx].fixedTotal = (members[mIdx].fixedTotal - log.amt) + parseFloat(newAmt);
-            
-            members[mIdx].logs[lIdx].amt = parseFloat(newAmt);
-            rootDb.child(currentGroupId).child(path).set(members);
+
+    function editExpense(mid, lid, isArc=false, arcM="") {
+        const val = prompt("Enter new amount:");
+        if(!val || isNaN(val)) return;
+        let p = isArc ? `archives/${arcM}` : 'members';
+        rootDb.child(currentGroupId).child(p).once('value').then(snap => {
+            let mbs = snap.val();
+            let mi = mbs.findIndex(m => m.id == mid), li = mbs[mi].logs.findIndex(l => l.id == lid), log = mbs[mi].logs[li];
+            if(log.cat === 'market') mbs[mi].marketTotal = (mbs[mi].marketTotal - log.amt) + parseFloat(val);
+            else mbs[mi].fixedTotal = (mbs[mi].fixedTotal - log.amt) + parseFloat(val);
+            mbs[mi].logs[li].amt = parseFloat(val);
+            rootDb.child(currentGroupId).child(p).set(mbs);
         });
     }
-    function deleteExpense(mid, lid, isArchive = false, arcMonth = "") {
-        if(!confirm("Delete this record?")) return;
-        let path = isArchive ? `archives/${arcMonth}` : 'members';
-        rootDb.child(currentGroupId).child(path).once('value').then(snap => {
-            let members = snap.val();
-            let mIdx = members.findIndex(m => m.id == mid);
-            let lIdx = members[mIdx].logs.findIndex(l => l.id == lid);
-            let log = members[mIdx].logs[lIdx];
-            
-            if(log.cat === 'market') members[mIdx].marketTotal -= log.amt;
-            else members[mIdx].fixedTotal -= log.amt;
-            
-            members[mIdx].logs.splice(lIdx, 1);
-            rootDb.child(currentGroupId).child(path).set(members);
+
+    function deleteExpense(mid, lid, isArc=false, arcM="") {
+        if(!confirm("Delete?")) return;
+        let p = isArc ? `archives/${arcM}` : 'members';
+        rootDb.child(currentGroupId).child(p).once('value').then(snap => {
+            let mbs = snap.val();
+            let mi = mbs.findIndex(m => m.id == mid), li = mbs[mi].logs.findIndex(l => l.id == lid), log = mbs[mi].logs[li];
+            if(log.cat === 'market') mbs[mi].marketTotal -= log.amt; else mbs[mi].fixedTotal -= log.amt;
+            mbs[mi].logs.splice(li, 1);
+            rootDb.child(currentGroupId).child(p).set(mbs);
         });
     }
+
     function renderRunningLogs(members) {
-        let allLogs = [];
-        members.forEach(m => { if(m.logs) m.logs.forEach(l => allLogs.push({...l, name: m.name})); });
-        allLogs.sort((a,b) => new Date(b.date) - new Date(a.date));
-        document.getElementById('runningLogTable').innerHTML = allLogs.map(l => `
-            <tr><td>${l.date}</td><td>${l.name}</td><td>${l.reason}</td><td>৳${l.amt}</td></tr>
-        `).join('');
+        let all = []; members.forEach(m => m.logs && m.logs.forEach(l => all.push({...l, name: m.name})));
+        all.sort((a,b) => new Date(b.date) - new Date(a.date));
+        document.getElementById('runningLogTable').innerHTML = all.map(l => `<tr><td>${l.date}</td><td>${l.name}</td><td>${l.reason}</td><td>৳${l.amt}</td></tr>`).join('');
     }
-    function toggleDetails(id) {
-        const el = document.getElementById(`details-${id}`);
-        el.style.display = el.style.display === 'block' ? 'none' : 'block';
-    }
-    function deleteMember(id) {
-        if(confirm("Remove Member?")) {
-            rootDb.child(currentGroupId).child('members').once('value').then(snap => {
-                let m = snap.val() || [];
-                rootDb.child(currentGroupId).child('members').set(m.filter(x => x.id != id));
-            });
-        }
-    }
-    function updateMeals(id, val) {
-        rootDb.child(currentGroupId).child('members').once('value').then(snap => {
-            let members = snap.val();
-            let mIdx = members.findIndex(i => i.id == id);
-            members[mIdx].meals = parseFloat(val) || 0;
-            rootDb.child(currentGroupId).child('members').set(members);
-        });
-    }
+
+    function toggleDetails(id) { const el = document.getElementById(`details-${id}`); el.style.display = el.style.display === 'block' ? 'none' : 'block'; }
+    function deleteMember(id) { if(confirm("Remove?")) rootDb.child(currentGroupId).child('members').once('value').then(s => { let m = s.val() || []; rootDb.child(currentGroupId).child('members').set(m.filter(x => x.id != id)); }); }
+    function updateMeals(id, v) { rootDb.child(currentGroupId).child('members').once('value').then(s => { let m = s.val(); let i = m.findIndex(x => x.id == id); m[i].meals = parseFloat(v) || 0; rootDb.child(currentGroupId).child('members').set(m); }); }
+
     function loadArchives() {
         rootDb.child(currentGroupId).child('archives').once('value', snap => {
-            const arc = snap.val();
-            const list = document.getElementById('archiveList');
-            if(!arc) { list.innerHTML = "No history found."; return; }
-            list.innerHTML = Object.keys(arc).map(month => `
-                <div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <b>${month}</b>
-                        <button onclick="toggleArcDetails('${month}')" style="width:auto; padding:5px 10px; font-size:11px;">View Details</button>
-                    </div>
-                    <div id="arc-detail-${month.replace(/\s/g, '')}" style="display:none; margin-top:10px; border-top:1px solid #ddd; padding-top:10px;">
-                        ${arc[month].map(m => `
-                            <div style="margin-bottom:10px;">
-                                <strong>${m.name}</strong> - Spent: ৳${((m.marketTotal||0)+(m.fixedTotal||0)).toFixed(1)}
-                                <table class="log-table">
-                                    ${(m.logs || []).map(l => `
-                                        <tr>
-                                            <td>${l.date}</td><td>${l.reason}</td><td>৳${l.amt}</td>
-                                            <td>
-                                                <button class="action-btn edit-btn" onclick="editExpense(${m.id}, ${l.id}, true, '${month}')">✎</button>
-                                                <button class="action-btn del-btn" onclick="deleteExpense(${m.id}, ${l.id}, true, '${month}')">✖</button>
-                                            </td>
-                                        </tr>`).join('')}
-                                </table>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
+            const arc = snap.val(); const list = document.getElementById('archiveList');
+            if(!arc) { list.innerHTML = "No history."; return; }
+            list.innerHTML = Object.keys(arc).map(m => `<div class="card"><b>${m}</b> <button onclick="toggleArcDetails('${m}')" style="width:auto; float:right; font-size:10px;">View</button>
+            <div id="arc-${m.replace(/\s/g, '')}" style="display:none; margin-top:10px;">${arc[m].map(mb => `<div>${mb.name} - ৳${((mb.marketTotal||0)+(mb.fixedTotal||0)).toFixed(1)}</div>`).join('')}</div></div>`).join('');
         });
     }
-    function toggleArcDetails(month) {
-        const id = `arc-detail-${month.replace(/\s/g, '')}`;
-        const el = document.getElementById(id);
-        el.style.display = el.style.display === 'block' ? 'none' : 'block';
-    }
+    function toggleArcDetails(m) { const el = document.getElementById(`arc-${m.replace(/\s/g, '')}`); el.style.display = el.style.display === 'block' ? 'none' : 'block'; }
+
     function archiveAndReset() {
-        const month = prompt("Enter Month (e.g., Feb 2026):");
-        if(!month) return;
-        rootDb.child(currentGroupId).child('members').once('value').then(snap => {
-            const data = snap.val();
-            rootDb.child(currentGroupId).child('archives').child(month).set(data).then(() => {
-                const reset = data.map(m => ({ ...m, marketTotal: 0, fixedTotal: 0, meals: 0, logs: [] }));
-                rootDb.child(currentGroupId).child('members').set(reset);
-                alert("Month Archived Successfully!");
+        const m = prompt("Month (e.g. Feb 2026):"); if(!m) return;
+        rootDb.child(currentGroupId).child('members').once('value').then(s => {
+            const d = s.val(); rootDb.child(currentGroupId).child('archives').child(m).set(d).then(() => {
+                const r = d.map(x => ({ ...x, marketTotal: 0, fixedTotal: 0, meals: 0, logs: [] }));
+                rootDb.child(currentGroupId).child('members').set(r); alert("Archived!");
             });
         });
     }
+
     function updateGroupSettings() {
-        const newName = document.getElementById('updateGroupName').value.trim().toLowerCase();
-        const newPass = document.getElementById('updateGroupPass').value.trim();
-        if(!newName || !newPass) return alert("Fill all fields");
-        
-        // Checking if new name already taken by another group
-        rootDb.child(newName).once('value', snap => {
-            if(snap.exists() && newName !== currentGroupId) {
-                alert("This group name is already taken. Please choose another one.");
+        const newN = document.getElementById('updateGroupName').value.trim().toLowerCase();
+        const newP = document.getElementById('updateGroupPass').value.trim();
+        if(!newN || !newP) return alert("Fill all fields");
+        if(isBad(newN)) return alert("বাজে শব্দ ব্যবহার করা যাবে না!");
+
+        rootDb.child(newN).once('value', snap => {
+            if(snap.exists() && newN !== currentGroupId) {
+                alert("This name is already taken.");
             } else {
-                rootDb.child(currentGroupId).once('value', snapOld => {
-                    const data = snapOld.val();
-                    data.password = newPass;
-                    rootDb.child(newName).set(data).then(() => {
-                        if(newName !== currentGroupId) rootDb.child(currentGroupId).remove();
-                        localStorage.setItem('mess_group_name', newName);
-                        localStorage.setItem('mess_group_pass', newPass);
+                rootDb.child(currentGroupId).once('value', sOld => {
+                    const data = sOld.val();
+                    data.password = newP;
+                    rootDb.child(newN).set(data).then(() => {
+                        if(newN !== currentGroupId) rootDb.child(currentGroupId).remove();
+                        localStorage.setItem('mess_group_name', newN);
+                        localStorage.setItem('mess_group_pass', newP);
+                        alert("Group Updated & Migrated!");
                         location.reload();
                     });
                 });
             }
         });
     }
-    function toggleTheme() {
-        document.body.dataset.theme = document.body.dataset.theme === 'light' ? 'dark' : 'light';
-    }
-    function logout() {
-        localStorage.clear();
-        location.reload();
-    }
+
+    function logout() { localStorage.removeItem('mess_group_name'); localStorage.removeItem('mess_group_pass'); location.reload(); }
 </script>
 </body>
 </html>
